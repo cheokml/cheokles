@@ -69,7 +69,16 @@ def factor_calc(x,y):
 
 
 def find_factors(x):
+    """ Takes an input and prints how many factors and nonfactors there are
 
+    Parameters
+    ___________
+    :param  x:  int: a number
+
+    Returns
+    ___________
+    :return: Returns statement with how many factors and nonfactors there are
+    """
     factors = []
     nonfactors = []
 
@@ -79,5 +88,43 @@ def find_factors(x):
         else:
             nonfactors.append(i)
 
-    return print(f'')
+    return print(f'X has {len(factors)} factors and {len(nonfactors)} nonfactors')
+
+
+# Using .format
+def multiply_table_format(x):
+
+    for i in range(1,x+1):
+        print('{0} * {1} = {2}'.format(x, i, x*i))
+
+    return
+
+
+# using f' '
+def multiply_table_f(x):
+
+    for i in range(1,x+1):
+        print(f'{x} * {i} = {x*i}')
+
+    return
+
+
+def print_menu():
+    print('1. Use .format\n2. Use f""')
+    return
+
+
+# Creating a class to pick between which multiplication format to use
+if __name__ == '__main__':
+    print_menu()
+    while True:
+        choice = input('Which choice do you want to do (1 or 2): ')
+        if choice in ('1', '2'):
+            break
+        print('Please input a valid ')
+    multiple = int(input('What number do you want to multiply to '))
+    if choice == '1':
+        multiply_table_f(multiple)
+    else:
+        multiply_table_format(multiple)
 
