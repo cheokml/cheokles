@@ -93,7 +93,16 @@ def find_factors(x):
 
 # Using .format
 def multiply_table_format(x):
+    """ Takes an input and creates a multiplication table - uses .format
 
+    Parameters
+    ___________
+    :param  x:  int: a number
+
+    Returns
+    ___________
+    :return: Returns a multiplication table
+    """
     for i in range(1,x+1):
         print('{0} * {1} = {2}'.format(x, i, x*i))
 
@@ -102,7 +111,16 @@ def multiply_table_format(x):
 
 # using f' '
 def multiply_table_f(x):
+    """ Takes an input and creates a multiplication table - uses f''
 
+    Parameters
+    ___________
+    :param  x:  int: a number
+
+    Returns
+    ___________
+    :return: Returns a multiplication table
+    """
     for i in range(1,x+1):
         print(f'{x} * {i} = {x*i}')
 
@@ -110,21 +128,46 @@ def multiply_table_f(x):
 
 
 def print_menu():
-    print('1. Use .format\n2. Use f""')
-    return
+    """ Prints options to select from
+
+    Parameters - None
+
+    Returns
+    ___________
+    :return: Returns the options to select from
+    """
+    return print('1. Use .format\n2. Use f""')
 
 
 # Creating a class to pick between which multiplication format to use
 if __name__ == '__main__':
+    # Prints the menu of options to select from
     print_menu()
+    # Create a loop that restarts if invalid input
     while True:
+        # Prints a question and asks for user input
         choice = input('Which choice do you want to do (1 or 2): ')
+        # Checks if user input is valid
         if choice in ('1', '2'):
+            # If choice is valid, then get out of the while loop and move on
             break
-        print('Please input a valid ')
+        # If choice is invalid, print statement and restart while loop
+        print('Please input a valid choice [1, 2]')
+    # Print question and asks for user input -> Converts it to an integer
     multiple = int(input('What number do you want to multiply to '))
+    # Takes user input from earlier to decide which function to use to create the table
     if choice == '1':
         multiply_table_f(multiple)
     else:
         multiply_table_format(multiple)
+
+
+# Quadratic formula
+def quad_formula(a,b,c):
+
+    x1 = round(((((b ** 2) - (4 * a * c))**0.5) - b) / (2 * a),3)
+    x2 = round(((((b ** 2) - (4 * a * c))**0.5) + b) / (2 * a),3)
+
+    return x1, x2
+
 
