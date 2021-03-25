@@ -171,3 +171,89 @@ def quad_formula(a,b,c):
     return x1, x2
 
 
+# Chapter 2
+
+'''
+Lists are mutable - you can add, remove, reorder values in lists
+Tuples are immutable - you cannot add, remove, or reorder values
+
+Create a list using [ ]
+Create a tuple using ( )
+
+Both have indexes you can refer to i.e. [0]/(0)
+
+Empty lists and Empty tuples exist
+However, you cannot add anything to an empty tuple as they are immutable 
+'''
+
+# Iterating over lists/tuples:
+l = ['x', 'y', 'z']
+
+# Assign items in list/tuple to variable i, loop over list
+for i in l:
+    # Print each item
+    print(i)
+
+# Assign index and items in list to variables - enumerate allows you to get the value and the index
+for d, i in enumerate(l):
+    print(d, i)
+
+# Using matplotlib to create a graph
+import matplotlib.pyplot as plt
+# Create two lists - one to store x-values, one to store y-values
+x_values = [1, 2, 3, 4, 5]
+y_values = [5, 4, 3, 2, 1]
+# Plot the coordinates
+plt.plot(x_values, y_values)
+'''
+Styling your graph:
+    Add a marker parameter to change each point's marker i.e. marker = 'o' <- Uses a small dot
+        If you add this parameter to plot(), you'll get the markers + line
+        If you only add the marker 'o' without the marker parameter, you'll only get the dots but no line
+    plt.tile('Title') <- Inserts title above graph
+    plt.xlabel('Label') <- Horizontal label below the x-axis
+    plt.ylabel('Label') <- Vertical label next to the y-axis
+    plt.axis(ymin=0, ymax=10, xmin=0, xmax=10) <- Set the minimum and max values of the axis
+    
+        
+You can also plot multiple lines in the same graph 
+    ie plt.plot(x_values, y_values, x2_values, y2_values, ...)
+    Or you can do 3 different plots, then do show() and it'll show all 3 at the same time
+'''
+# Add a legend - Parameters are what you want to label each line
+plt.legend([2000, 2005, 2010])
+# Show the plotted graph
+plt.show()
+# Saving the graph - Available filetypes: png, pdf, svg - If no location specified, save to current directory
+plt.savefig('location\Name.filetype')
+
+
+# Plotting a formula example
+def force_range(m1, m2):
+    """ Generate a graph on the relationship between Force and distance between two masses
+    :param m1: INT: The mass of object 1
+    :param m2: INT: The mass of object 2
+    """
+    # Generate list of values for range from 100 - 1000 (increments of 50)
+    r = range(100, 1001, 50)
+    # Gravity is a constant variable
+    G = 6.674 * (10**-11)
+    # Empty list to store calculated values of F
+    F = []
+
+    # For each increment of r
+    for dist in r:
+        # Calculate force
+        force = G*(m1*m2)/(dist**2)
+        # Then append that value to F
+        F.append(force)
+
+    # Draw the graph
+    plt.plot(r, F)
+
+    return
+
+
+
+
+
