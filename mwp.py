@@ -254,6 +254,18 @@ def force_range(m1, m2):
     return
 
 
+def create_bar_chart(data, labels):
+    """ Generate a bar chart
+    :param data: List of numbers
+    :param labels: List of labels for y-axis
+    :return:
+    """
 
+    # Check how many bars need to be made
+    num_bars = len(data)
 
+    positions = range(1, num_bars+1)
+    plt.barh(positions)
+
+    return
 
