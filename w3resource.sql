@@ -2,6 +2,7 @@
 -- Answering all SQL problems + notes on shortcuts
 -- https://www.w3resource.com/sql-exercises/sql-retrieve-from-table.php#SQLEDITOR
 
+-- Retrieving data from tables
 -- 1. Write a SQL statement to display all the information of all salesmen.
 SELECT * -- * SELECTS all rows
 FROM salesman;
@@ -237,3 +238,102 @@ WHERE emp_lname = 'Snares';
 SELECT *
 FROM emp_details
 WHERE emp_dept = 57;
+
+
+-- Using Boolean and Relational Operators
+-- These were really poorly worded questions
+-- 1. Write a query to display all customers with a grade above 100.
+SELECT cust_name
+FROM customer
+WHERE grade > 100;
+
+-- 2. Write a query statement to display all customers in New York who have a grade
+--      value above 100.
+SELECT cust_name
+FROM customer
+WHERE
+    grade > 100
+    AND city = 'New York';
+
+-- 3. Write a SQL statement to display all customers, who are either belongs to the
+--      city New York or had a grade above 100.
+SELECT cust_name
+FROM customer
+WHERE
+    grade > 100
+    OR city = 'New York';
+
+-- 4. Write a SQL statement to display all the customers, who are either belongs
+--      to the city New York or not had a grade above 100.
+SELECT cust_name
+FROM customer
+WHERE
+    city = 'New York'
+    OR NOT grade > 100;
+
+-- 5.Write a SQL query to display those customers who are neither belongs to the
+--      city New York nor grade value is more than 100.
+SELECT cust_name
+FROM customer
+WHERE NOT (
+    city = 'New York'
+    OR grade > 100) ;
+
+-- 6. Write a SQL statement to display either those orders which are not issued on
+--      date 2012-09-10 and issued by the salesman whose ID is 5005 and below or
+--      those orders which purchase amount is 1000.00 and below.
+SELECT ord_no
+FROM orders
+WHERE NOT ((                 -- Where orders were not
+    ord_date = '2012-09-10'  -- on 2012-09-10
+    AND salesman_id > 5005)  -- AND not greater than 5005 (less than 5005)
+    OR purch_amt > 1000.00); -- or purchase amount
+
+-- 7. Write a SQL statement to display salesman_id, name, city and commission who
+--      gets the commission within the range more than 0.10% and less than 0.12%.
+SELECT
+    salesman_id
+    , name
+    , city
+    , commission
+FROM salesman
+WHERE
+    commission > 0.10
+    AND commission < 0.12;
+
+-- 8. Write a SQL query to display all orders where purchase amount less than 200
+--      or exclude those orders which order date is on or greater than 10th Feb,2012
+--      and customer id is below 3009.
+SELECT ord_no
+FROM orders
+WHERE
+    purch_amt < 200
+    OR (ord_date < '2012-02-10' AND customer_id >= 3009);
+
+-- 9. Write a SQL statement to exclude the rows which satisfy 1) order dates are
+--      2012-08-17 and purchase amount is below 1000 2) customer id is greater
+--      than 3005 and purchase amount is below 1000.
+SELECT *
+FROM orders
+WHERE NOT
+    (ord_date = '2012-08-17' AND purch_amt < 1000)
+    AND (customer_id > 3005 purch_amt < 1000);
+
+
+-- Query on Multiple Tables
+-- 1. Write a query to find those customers with their name and those salesmen
+--      with their name and city who lives in the same city.
+SELECT
+    s.city
+    , s.name
+    , c.name
+FROM
+    (
+    SELECT name, city
+    FROM salesman
+    ) s
+JOIN
+    (
+    SELECT cust_name, city
+    FROM customer
+    ) c ON s.city = c.city;
