@@ -162,3 +162,84 @@ WHERE tmp.Occ > 1;
 
 -- Find Customers that never order
 -- https://leetcode.com/problems/customers-who-never-order/
+WITH tmp AS (
+    SELECT CustomerId, COUNT(CustomerId) AS occ
+    FROM Orders
+    GROUP BY CustomerId
+)
+
+SELECT Name AS Customers
+FROM Customers c
+LEFT JOIN tmp t on c.Id = t.CustomerId
+WHERE t.occ IS NULL;
+-- Alternative (Faster)
+SELECT Name AS Customers
+FROM Customers c
+LEFT JOIN
+    (SELECT
+        CustomerID
+        , COUNT(CustomerId) AS occ
+     FROM Orders
+     GROUP BY CustomerId) o on c.Id = o.CustomerId
+WHERE o.occ IS NULL;
+-- Alternative
+SELECT A.Name AS Customers
+FROM Customers A
+LEFT JOIN Orders B ON a.Id = B.CustomerId
+WHERE b.CustomerId IS NULL;
+-- Alternative
+SELECT A.Name AS Customers
+FROM Customers A
+WHERE A.Id NOT IN (SELECT CustomerId FROM Orders);
+
+
+-- Similar to previous one - Find the highest salaries in each department
+-- https://leetcode.com/problems/department-highest-salary/
+SELECT
+    d.Name AS 'Department'
+    , e.Name AS 'Employee'
+    , e.Salary
+FROM
+    (SELECT
+        Name
+        , DepartmentId
+        , Salary
+        , DENSE_RANK() OVER(PARTITION BY DepartmentId ORDER BY Salary DESC) AS 'Rank'
+     FROM Employee) e
+JOIN Department d ON e.DepartmentId = d.Id
+WHERE e.Rank = 1;
+
+
+-- DELETE All duplicate emails and keep only the lowest Id
+-- https://leetcode.com/problems/delete-duplicate-emails/
+DELETE FROM Person
+WHERE Id NOT IN                 -- Create a list of Id's that you need to delete
+    (                           -- This list should be the smallest Id's that you want to keep
+        SELECT Id               -- Since we want the smallest Id of each occurrence we can use MIN here to select  can
+        FROM                    -- the smallest Id and the Email associated with that Id. Then the outer query
+            (SELECT             -- selects just the Id's that we want to keep then delete everything else
+                MIN(Id) AS Id
+             FROM Person
+            GROUP BY Email) p
+    );
+-- Alternative
+DELETE P1
+FROM PERSON P1, PERSON P2
+WHERE P1.EMAIL = P2.EMAIL AND P1.ID > P2.ID;
+
+-- Find the Id's of Dates that had temps higher than their previous day
+-- https://leetcode.com/problems/rising-temperature/
+SELECT
+    DISTINCT w2.id
+FROM Weather w1, Weather w2
+WHERE
+    w2.recordDate = DATE_ADD(w1.recordDate, INTERVAL 1 DAY)
+    AND w2.temperature > w1.temperature ;
+-- Alternative (Faster)
+SELECT                                              -- The difference between First date and Second date is 1
+    w1.id                                           -- if we switched w1 and w2 then it would be -1 so that means
+FROM Weather w1                                     -- we want w1 temp to be higher than w2 temp. Then we want to select
+JOIN Weather w2                                     -- w1'd id because our where statement filters to where w1 day is
+WHERE                                               -- one day bigger and has a bigger temperature
+    DATEDIFF(w1.recordDate, w2.recordDate) = 1      --
+    AND w1.temperature > w2.temperature;            --
