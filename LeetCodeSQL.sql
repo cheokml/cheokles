@@ -241,5 +241,109 @@ SELECT                                              -- The difference between Fi
 FROM Weather w1                                     -- we want w1 temp to be higher than w2 temp. Then we want to select
 JOIN Weather w2                                     -- w1'd id because our where statement filters to where w1 day is
 WHERE                                               -- one day bigger and has a bigger temperature
-    DATEDIFF(w1.recordDate, w2.recordDate) = 1      --
-    AND w1.temperature > w2.temperature;            --
+    DATEDIFF(w1.recordDate, w2.recordDate) = 1
+    AND w1.temperature > w2.temperature;
+
+
+-- Find the Cancellation Rate for unbanned users
+-- https://leetcode.com/problems/trips-and-users/
+-- My First Attempt
+WITH unbanned AS (
+    SELECT DISTINCT
+        t.Client_Id
+        , t.Driver_Id
+    FROM Trips t
+    LEFT JOIN Users u1 ON t.Client_Id = u1.Users_Id
+    LEFT JOIN Users u2 ON t.Driver_id = u2.Users_Id
+    WHERE u1.Banned = 'No' AND u2.Banned = 'No'
+)
+
+SELECT
+    Request_at AS 'Day'
+    , ROUND(COUNT(CASE WHEN t.Status != 'completed' THEN 1 ELSE NULL END) /
+        COUNT(Status), 2) AS 'Cancellation Rate'
+FROM Trips t
+WHERE
+    t.Client_Id IN (SELECT Client_Id FROM unbanned)
+    AND t.Driver_Id IN (SELECT Driver_Id FROM unbanned)
+    AND Request_At BETWEEN '2013-10-01' AND '2013-10-03'
+GROUP BY Request_At;
+-- Second Attempt
+SELECT
+    Request_at AS 'Day'
+    , ROUND(COUNT(IF(t.Status != 'completed', True, NULL)) /
+        COUNT(Status), 2) AS 'Cancellation Rate'
+FROM Trips t
+WHERE
+    t.Client_Id IN (SELECT Users_Id FROM Users WHERE Banned = 'No')
+    AND t.Driver_Id IN (SELECT Users_Id FROM Users WHERE Banned = 'No')
+    AND Request_At BETWEEN '2013-10-01' AND '2013-10-03'
+GROUP BY Request_At;
+-- Third Attempt -> Actually the Fastest
+-- So when you COUNT a row based on its value use CASE WHEN criteria THEN 1 else NULL
+SELECT
+    Request_at AS 'Day'
+    , ROUND(COUNT(CASE WHEN t.Status != 'completed' THEN 1 ELSE NULL END) /
+        COUNT(Status), 2) AS 'Cancellation Rate'
+FROM Trips t
+WHERE
+    t.Client_Id IN (SELECT Users_Id FROM Users WHERE Banned = 'No')
+    AND t.Driver_Id IN (SELECT Users_Id FROM Users WHERE Banned = 'No')
+    AND Request_At BETWEEN '2013-10-01' AND '2013-10-03'
+GROUP BY Request_At;
+
+-- Please list out all classes which have more than or equal to 5 students.
+-- https://leetcode.com/problems/classes-more-than-5-students/
+SELECT
+    class
+FROM courses
+GROUP BY class
+HAVING COUNT(DISTINCT student) >= 5;  -- Apparently a kid can be in the same class twice?
+
+
+-- Find three consecutive days where people >= 100
+-- https://leetcode.com/problems/human-traffic-of-stadium/
+WITH tmp AS (
+    SELECT
+        s.id
+        , s.visit_date
+        , s.people
+        , s.id - row_number() OVER(ORDER BY id) AS c_days
+    FROM stadium s
+    WHERE people >= 100
+)
+
+SELECT
+    tmp.id
+    , tmp.visit_date
+    , tmp.people
+FROM tmp
+WHERE c_days IN (SELECT c_days FROM tmp GROUP BY c_days HAVING COUNT(*) >= 3);
+
+
+-- Find Odd numbered not boring movies ordered by rating
+-- https://leetcode.com/problems/not-boring-movies/
+SELECT DISTINCT *
+FROM cinema
+WHERE
+    id % 2 != 0
+    AND description != 'boring'
+ORDER BY rating DESC;
+
+
+-- Exchange all odd students seats with the one before them except for the last student if they are odd
+-- https://leetcode.com/problems/exchange-seats/
+SELECT
+    (CASE
+        WHEN id % 2 != 0 AND counts != id THEN id + 1
+        WHEN id % 2 != 0 AND counts = id THEN id
+        ELSE id - 1
+    END) AS id,
+    student
+FROM
+    seat,
+    (SELECT
+        COUNT(*) AS counts
+    FROM
+        seat) AS seat_counts
+ORDER BY id ASC;
